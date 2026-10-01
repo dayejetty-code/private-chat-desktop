@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
+    <AssemblyName>PrivateChat</AssemblyName>
+    <RootNamespace>PrivateChat</RootNamespace>
+    <StartupObject>PrivateChat.Program</StartupObject>
+    <Version>0.8.1</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableQa)' == 'true'">
+    <DefineConstants>$(DefineConstants);ENABLE_QA</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(EnableQa)' != 'true'">
+    <Compile Remove="SelfTest.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(EnableQa)' == 'true'">
+    <Compile Include="../tests/SecurityTests.cs" Link="SecurityTests.cs" />
+    <Compile Include="../tests/HistoryTests.cs" Link="HistoryTests.cs" />
+    <Compile Include="../tests/RelayTests.cs" Link="RelayTests.cs" />
+    <Compile Include="../tests/AuditRegressionTests.cs" Link="AuditRegressionTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(RuntimeManifestPath)" LogicalName="PrivateChat.RuntimeManifest" />
+  </ItemGroup>
+</Project>

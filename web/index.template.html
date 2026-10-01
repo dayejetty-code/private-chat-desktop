@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Private Chat Windows 测试版。基于 SimpleX 的一对一加密文字聊天，通过 Tor 连接。下载后双击安装。">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>Private Chat — Windows 下载</title>
+  <link rel="icon" href="mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">跳到主要内容</a>
+{{PREVIEW_BANNER}}
+  <div class="page">
+    <header class="header">
+      <a class="brand" href="#" aria-label="Private Chat 首页"><img src="mark.svg" width="28" height="28" alt=""><span>Private Chat</span></a>
+      <nav aria-label="主导航"><a href="#install">安装方法</a><a href="#questions">常见问题</a><a href="{{SOURCE_URL}}" rel="noreferrer">源代码</a></nav>
+    </header>
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="intro">
+          <p class="eyebrow">Windows 桌面应用 <span>测试版 {{VERSION}}</span></p>
+          <h1 id="hero-title">对话，<br>留给彼此。</h1>
+          <p class="lead">无需手机号或邮箱。通过一次性邀请，<br class="desktop-break">建立属于你们的加密文字会话。</p>
+          <a class="button primary" href="{{DOWNLOAD_URL}}" download>下载 Windows 安装包 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v5h14v-5"/></svg></a>
+          <p class="download-meta">v{{VERSION}} · x64 · {{SIZE}} MB · 内置运行环境</p>
+          <p class="preview-note">这是开发测试版，尚未经过独立安全审计。<br>建议先使用虚构消息测试。</p>
+        </div>
+        <aside class="download-card" aria-label="安装包信息">
+          <div class="card-top"><img src="mark.svg" width="52" height="52" alt=""><span class="pill">Windows 版</span></div>
+          <h2>下载。安装。开始对话。</h2>
+          <p>双击安装文件，按中文向导完成安装。<br>无需手动解压，无需另外安装 .NET。</p>
+          <dl><div><dt>运行系统</dt><dd>Windows 11 x64<br><small>最低 Windows 10 2004 x64</small></dd></div><div><dt>安装权限</dt><dd>当前用户，无需管理员权限</dd></div><div><dt>启动方式</dt><dd>桌面或开始菜单快捷方式</dd></div></dl>
+          <div class="card-links"><a href="{{CHECKSUM_URL}}" download>下载 SHA-256 校验文件</a><a href="{{RELEASE_URL}}" rel="noreferrer">查看版本说明</a></div>
+        </aside>
+      </section>
+
+      <section class="principles" aria-label="当前功能">
+        <article><span class="number">01</span><h2>端到端加密</h2><p>使用 SimpleX 聊天核心。通过可信渠道核验安全码后，再开始发送。</p></article>
+        <article><span class="number">02</span><h2>通过 Tor 连接</h2><p>支持预设或自定义消息中继。连接失败时，不会自动改为直连。</p></article>
+        <article><span class="number">03</span><h2>本地加密资料库</h2><p>由你设置口令。闲置或锁定后结束连接，重新解锁后接收待收消息。</p></article>
+      </section>
+
+      <section class="preview" aria-labelledby="preview-title">
+        <div class="section-head"><h2 id="preview-title">让界面回到对话本身。</h2><p>简洁的桌面界面，适合阅读的会话宽度。</p></div>
+        <figure><img src="app-preview.png" width="1124" height="741" loading="lazy" alt="Private Chat 桌面界面预览：左侧为会话和网络设置，右侧为聊天区域。"><figcaption>界面示意 · 空资料库 · 未连接网络</figcaption></figure>
+      </section>
+
+      <section id="install" class="install" aria-labelledby="install-title">
+        <div class="section-head"><h2 id="install-title">三步开始。</h2><p>浏览器负责下载，聊天在桌面应用中进行。</p></div>
+        <ol><li><span>01</span><div><h3>下载安装包</h3><p>点击上方下载按钮，保存 <code>{{FILENAME}}</code>。</p></div></li><li><span>02</span><div><h3>双击完成安装</h3><p>退出已打开的 Private Chat，按向导安装。完成后从桌面快捷方式打开。</p></div></li><li><span>03</span><div><h3>邀请并核验联系人</h3><p>设置本地口令，等待 Tor 连接。一方生成邀请，另一方接受；双方核验安全码后即可发送文字。</p></div></li></ol>
+      </section>
+
+      <section id="questions" class="questions" aria-labelledby="questions-title">
+        <div class="section-head"><h2 id="questions-title">下载前，了解这些。</h2></div>
+        <details><summary>现在可以用来做什么？</summary><p>当前支持一对一文字聊天、一次性邀请、安全码核验、历史消息翻页及自定义中继。附件、群聊、通话和多设备同步暂未提供。跨电脑、不同网络及长时间使用的验证仍在进行。</p></details>
+        <details><summary>Windows 提示“未知发布者”，怎么办？</summary><p>当前测试版尚未取得发布者代码签名。请确认下载链接来自本项目，并核对安装包的 SHA-256。不要关闭 Windows 安全防护；如果不能确认文件来源，请停止安装。</p></details>
+        <details><summary>更新或卸载会删除聊天记录吗？</summary><p>安装程序只更新程序文件，卸载保留 <code>%LOCALAPPDATA%\PrivateChatDesktop</code> 中的本地资料库。当前没有备份恢复界面，请不要删除资料库。遗忘口令无法找回。</p></details>
+        <details><summary>为什么连接需要等待？</summary><p>启动后需要建立 Tor 通道，连接时间受网络影响。可以在应用中选择网桥，或切换为“公共域名（经 Tor）”入口后重连。后者依然经过 Tor；通道建立并不代表消息已经送达。</p></details>
+        <details><summary>聊天内容能保证绝对不泄露吗？</summary><p>不能。加密无法保护已被控制的设备，也无法阻止对方保存消息或所有流量关联分析。本项目尚未完成独立安全审计，不应把测试通过理解为安全保证。</p></details>
+        <details><summary>如何核对安装文件？</summary><p>下载校验文件后，在 PowerShell 中执行下方命令，将输出与校验文件比较。SHA-256 用于核对文件完整性，不能替代发布者签名。</p><pre><code>Get-FileHash .\{{FILENAME}} -Algorithm SHA256</code></pre><p class="hash">本版本 SHA-256：<code>{{SHA256}}</code></p></details>
+      </section>
+    </main>
+    <footer><a class="brand" href="#"><img src="mark.svg" width="22" height="22" alt=""><span>Private Chat</span></a><p>独立实验客户端 · 基于 SimpleX 与 Tor</p><a href="{{SOURCE_URL}}/blob/main/LICENSE" rel="noreferrer">AGPL-3.0 许可证</a></footer>
+  </div>
+</body>
+</html>

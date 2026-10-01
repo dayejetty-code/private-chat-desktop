@@ -1,0 +1,150 @@
+<Window x:Class="PrivateChat.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="Private Chat" Width="1140" Height="780" MinWidth="940" MinHeight="620"
+ Background="#F7F7F8" Foreground="#282C34" FontFamily="Microsoft YaHei UI, Segoe UI" FontSize="13"
+ UseLayoutRounding="True" SnapsToDevicePixels="True" WindowStartupLocation="CenterScreen">
+ <Window.Resources>
+  <SolidColorBrush x:Key="Muted" Color="#686E79"/>
+  <SolidColorBrush x:Key="Accent" Color="#002FA7"/>
+  <SolidColorBrush x:Key="Line" Color="#E1E3E7"/>
+  <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  <Style x:Key="FocusRing" TargetType="Control"><Setter Property="Template"><Setter.Value><ControlTemplate><Border BorderBrush="{StaticResource Accent}" BorderThickness="2" Margin="-3" CornerRadius="8"/></ControlTemplate></Setter.Value></Setter></Style>
+  <Style TargetType="Button">
+   <Setter Property="Foreground" Value="#303540"/><Setter Property="Background" Value="#FFFFFF"/>
+   <Setter Property="BorderBrush" Value="#D7DAE0"/><Setter Property="BorderThickness" Value="1"/>
+   <Setter Property="Padding" Value="14,9"/><Setter Property="Cursor" Value="Hand"/>
+   <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+    <Border x:Name="Surface" CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" RecognizesAccessKey="True"/></Border>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#7184AB"/></Trigger>
+     <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.75"/></Trigger>
+     <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45"/><Setter Property="Cursor" Value="Arrow"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Primary" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Background" Value="{StaticResource Accent}"/><Setter Property="BorderBrush" Value="{StaticResource Accent}"/><Setter Property="Foreground" Value="#FFFFFF"/></Style>
+  <Style x:Key="Quiet" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Background" Value="Transparent"/><Setter Property="BorderBrush" Value="Transparent"/></Style>
+  <Style TargetType="TextBox">
+   <Setter Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#282C34"/><Setter Property="CaretBrush" Value="{StaticResource Accent}"/>
+   <Setter Property="BorderBrush" Value="#D7DAE0"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="13,11"/>
+   <Setter Property="SelectionBrush" Value="#ADC1EF"/><Setter Property="SelectionOpacity" Value="0.55"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox">
+    <Border x:Name="Field" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6"><ScrollViewer x:Name="PART_ContentHost"/></Border>
+    <ControlTemplate.Triggers><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Field" Property="BorderBrush" Value="{StaticResource Accent}"/></Trigger><Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.55"/></Trigger></ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="PasswordBox">
+   <Setter Property="Background" Value="#FFFFFF"/><Setter Property="Foreground" Value="#282C34"/><Setter Property="CaretBrush" Value="{StaticResource Accent}"/>
+   <Setter Property="BorderBrush" Value="#D7DAE0"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="13,11"/><Setter Property="SelectionBrush" Value="#ADC1EF"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="PasswordBox">
+    <Border x:Name="Field" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6"><ScrollViewer x:Name="PART_ContentHost"/></Border>
+    <ControlTemplate.Triggers><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Field" Property="BorderBrush" Value="{StaticResource Accent}"/></Trigger></ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ComboBox">
+   <Setter Property="Foreground" Value="#303540"/><Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBox">
+    <Grid>
+     <ToggleButton Focusable="False" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+      <ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border x:Name="Surface" Background="#FFFFFF" BorderBrush="#D7DAE0" BorderThickness="1" CornerRadius="6" Padding="12"><Path Data="M 0,0 L 4,4 8,0" Stroke="#686E79" StrokeThickness="1.3" HorizontalAlignment="Right" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#7184AB"/></Trigger></ControlTemplate.Triggers></ControlTemplate></ToggleButton.Template>
+     </ToggleButton>
+     <ContentPresenter Content="{TemplateBinding SelectionBoxItem}" Margin="12,9,30,9" IsHitTestVisible="False"/>
+     <Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False"><Border Background="#FFFFFF" BorderBrush="#D7DAE0" BorderThickness="1" CornerRadius="6" Padding="4" MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"><ItemsPresenter/></Border></Popup>
+    </Grid>
+    <ControlTemplate.Triggers><Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45"/></Trigger></ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ComboBoxItem"><Setter Property="Foreground" Value="#303540"/><Setter Property="Padding" Value="10,9"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBoxItem"><Border x:Name="Option" Padding="{TemplateBinding Padding}" Background="Transparent" CornerRadius="4"><ContentPresenter/></Border><ControlTemplate.Triggers><Trigger Property="IsHighlighted" Value="True"><Setter TargetName="Option" Property="Background" Value="#E8ECF5"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+  <Style TargetType="ListBox"><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#282C34"/><Setter Property="BorderThickness" Value="0"/><Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/><Setter Property="Padding" Value="12,0"/></Style>
+  <Style TargetType="ListBoxItem">
+   <Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="14,14"/><Setter Property="Margin" Value="0,0,0,4"/><Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Item" Background="Transparent" BorderBrush="Transparent" BorderThickness="2,0,0,0" CornerRadius="5" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Item" Property="Background" Value="#E9EBEF"/></Trigger><Trigger Property="IsSelected" Value="True"><Setter TargetName="Item" Property="Background" Value="#E5EAF4"/><Setter TargetName="Item" Property="BorderBrush" Value="{StaticResource Accent}"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ScrollBar"><Setter Property="Width" Value="10"/><Setter Property="Background" Value="Transparent"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ScrollBar"><Grid Background="Transparent"><Track x:Name="PART_Track" IsDirectionReversed="True"><Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False"/></Track.DecreaseRepeatButton><Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="#BDC2CB" CornerRadius="3" Margin="3"/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb><Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False"/></Track.IncreaseRepeatButton></Track></Grid></ControlTemplate></Setter.Value></Setter></Style>
+  <Style x:Key="Dialog" TargetType="Border"><Setter Property="Background" Value="#FFFFFF"/><Setter Property="BorderBrush" Value="{StaticResource Line}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="10"/></Style>
+ </Window.Resources>
+ <Grid ClipToBounds="True">
+  <Grid.RowDefinitions><RowDefinition Height="60"/><RowDefinition/><RowDefinition Height="32"/></Grid.RowDefinitions>
+  <Border Background="#FFFFFF" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="24,0">
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+     <Path Stroke="{StaticResource Accent}" StrokeThickness="1.6" Data="M 3,10 L 3,22 19,22 19,10 Z M 6,10 L 6,6 C 6,0 16,0 16,6 L 16,10 M 11,14 L 11,18" Width="22" Height="24" Margin="0,0,12,0"/>
+     <TextBlock Text="Private Chat" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center"/><TextBlock Text="本地测试版" Foreground="{StaticResource Muted}" FontSize="11" Margin="16,0,0,0" VerticalAlignment="Center"/>
+    </StackPanel>
+    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><TextBlock x:Name="NetworkLabel" Text="已锁定 · 未联网" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,18,0" FontSize="12"/><Button Content="帮助" Click="Help_Click" Style="{StaticResource Quiet}" Padding="12,6" Margin="0,0,6,0"/><Button x:Name="LockButton" Content="锁定" Click="Lock_Click" Visibility="Collapsed" Padding="12,6"/></StackPanel>
+   </Grid>
+  </Border>
+  <Grid Grid.Row="1" x:Name="ChatView" Visibility="Collapsed">
+   <Grid.ColumnDefinitions><ColumnDefinition Width="248"/><ColumnDefinition/></Grid.ColumnDefinitions>
+   <Border Background="#F0F1F3" BorderBrush="{StaticResource Line}" BorderThickness="0,0,1,0">
+    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <Grid Margin="22,22,20,20"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="会话" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center"/><Button x:Name="AddButton" Grid.Column="1" Content="添加联系人" Click="Add_Click" Padding="9,7" FontSize="12"/></Grid>
+     <Grid Grid.Row="1">
+      <ListBox x:Name="ContactsList" SelectionChanged="Contact_Selected"><ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Name}" FontSize="14" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding Detail}" Foreground="{StaticResource Muted}" FontSize="11" Margin="0,7,0,0"/></StackPanel></DataTemplate></ListBox.ItemTemplate></ListBox>
+      <TextBlock x:Name="NoContacts" Text="还没有联系人。&#x0a;通过一次性邀请建立连接。" Margin="24,6" Foreground="{StaticResource Muted}" LineHeight="22" FontSize="12" IsHitTestVisible="False"/>
+     </Grid>
+     <StackPanel Grid.Row="2" Margin="22,12,22,18">
+      <Border BorderBrush="#DDDFE4" BorderThickness="0,1,0,0" Padding="0,16,0,0"><TextBlock Text="网络连接" Foreground="{StaticResource Muted}" FontSize="11"/></Border>
+      <ComboBox x:Name="TransportMode" Margin="0,9,0,10" SelectedIndex="0"><ComboBoxItem Content="Tor" Tag="direct"/><ComboBoxItem Content="Tor · obfs4 网桥" Tag="obfs4"/><ComboBoxItem Content="Tor · Snowflake 网桥" Tag="snowflake"/></ComboBox>
+      <TextBlock Text="中继入口 · 始终经过 Tor" FontSize="11" Foreground="{StaticResource Muted}" Margin="0,4,0,0"/>
+      <ComboBox x:Name="RelayEntry" Margin="0,8,0,12" SelectedIndex="0"><ComboBoxItem Content="优先 .onion" Tag="onionViaSocks"/><ComboBoxItem Content="公共域名（经 Tor）" Tag="public"/></ComboBox>
+      <Button x:Name="ReconnectButton" Content="重新连接" Click="Reconnect_Click"/><Button x:Name="RelaySettingsButton" Content="消息中继设置" Click="RelaySettings_Click" Margin="0,8,0,0"/>
+      <TextBlock Text="闲置 5 分钟后自动锁定。" FontSize="11" Foreground="{StaticResource Muted}" Margin="0,14,0,0"/>
+     </StackPanel>
+    </Grid>
+   </Border>
+   <Grid Grid.Column="1" x:Name="ConversationArea" Background="#FFFFFF">
+    <Grid x:Name="ReadingColumn" MaxWidth="840" Margin="24,0" HorizontalAlignment="Stretch">
+     <Grid.RowDefinitions><RowDefinition Height="88"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="16,18">
+      <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel Margin="0,0,20,0"><TextBlock x:Name="ChatTitle" Text="你的私人会话" FontSize="20" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/><TextBlock x:Name="ChatDetail" Text="选择联系人，开始聊天。" Margin="0,6,0,0" Foreground="{StaticResource Muted}" FontSize="12" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/></StackPanel><Button x:Name="VerifyButton" Grid.Column="1" Content="核验安全码" Click="Verify_Click" Style="{StaticResource Quiet}" VerticalAlignment="Center" Visibility="Collapsed"/></Grid>
+     </Border>
+     <Grid Grid.Row="1">
+      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
+      <DockPanel x:Name="HistoryBar" Margin="16,14,16,0" Visibility="Collapsed"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="12,0,0,0"><Button x:Name="OlderButton" Content="更早消息" Click="Older_Click" Style="{StaticResource Quiet}" Padding="8,5" Margin="0,0,4,0" FontSize="12"/><Button x:Name="NewerButton" Content="较新消息" Click="Newer_Click" Style="{StaticResource Quiet}" Padding="8,5" Margin="0,0,4,0" FontSize="12"/><Button x:Name="LatestButton" Content="回到最新" Click="Latest_Click" Padding="8,5" FontSize="12"/></StackPanel><TextBlock x:Name="HistoryStatus" Foreground="{StaticResource Muted}" FontSize="11" VerticalAlignment="Center"/></DockPanel>
+      <ScrollViewer Grid.Row="1" x:Name="MessageScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="16,24,16,16"><StackPanel x:Name="MessagesPanel"/></ScrollViewer>
+      <ScrollViewer x:Name="EmptyStateScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" VerticalContentAlignment="Center" Visibility="{Binding Visibility, ElementName=EmptyConversation}">
+       <StackPanel x:Name="EmptyConversation" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="360" Margin="28,20">
+        <TextBlock Text="从一次邀请开始。" FontSize="24" Margin="0,0,0,14"/><TextBlock Text="无需手机号或邮箱。每个新联系人使用独立连接和随机昵称。" Foreground="{StaticResource Muted}" FontSize="14" LineHeight="25"/>
+        <Border BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Margin="0,24,0,0" Padding="0,16,0,0"><TextBlock x:Name="ConnectionHelp" Text="正在连接 Tor。建立连接后即可创建或接受邀请。" Foreground="{StaticResource Muted}" FontSize="12" LineHeight="22"/></Border>
+       </StackPanel>
+      </ScrollViewer>
+     </Grid>
+     <Grid x:Name="ComposerContent" Grid.Row="2" Margin="16,14,16,18"><Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <TextBox x:Name="MessageInput" MaxLength="12000" MinHeight="64" MaxHeight="140" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" PreviewKeyDown="Message_KeyDown" IsEnabled="False" FontSize="15" AutomationProperties.Name="消息内容"/>
+      <Button x:Name="SendButton" Grid.Column="1" Content="发送" Style="{StaticResource Primary}" Margin="12,0,0,0" Padding="20,10" VerticalAlignment="Bottom" Height="40" Click="Send_Click" IsEnabled="False"/>
+      <TextBlock Grid.Row="1" Text="Ctrl + Enter 发送 · Enter 换行" Foreground="{StaticResource Muted}" FontSize="11" Margin="1,9,0,0"/>
+     </Grid>
+    </Grid>
+   </Grid>
+  </Grid>
+  <Grid Grid.Row="1" x:Name="UnlockView" MaxWidth="860" MaxHeight="520" Margin="32,24" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+   <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="360"/></Grid.ColumnDefinitions>
+   <StackPanel VerticalAlignment="Center" Margin="0,0,64,0">
+    <TextBlock Text="对话，&#x0a;留给彼此。" FontSize="36" LineHeight="54"/>
+    <TextBlock Text="无需账号。独立连接。&#x0a;由你掌握本地聊天资料。" FontSize="14" LineHeight="27" Foreground="{StaticResource Muted}" Margin="0,20,0,32"/>
+    <Border BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="0,18,0,0"><StackPanel><TextBlock Text="SimpleX 端到端加密" Foreground="{StaticResource Muted}" FontSize="12"/><TextBlock Text="通过 Tor 建立连接" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,9,0,0"/></StackPanel></Border>
+   </StackPanel>
+   <ScrollViewer Grid.Column="1" x:Name="UnlockFormScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" VerticalContentAlignment="Center">
+    <Border x:Name="UnlockCard" Style="{StaticResource Dialog}" Padding="28" VerticalAlignment="Center"><StackPanel>
+     <TextBlock x:Name="UnlockHeading" Text="创建本地资料库" FontSize="22" FontWeight="SemiBold"/><TextBlock x:Name="UnlockHint" Text="设置至少 12 个字符的口令。建议使用多个随机词组成的长口令。" Foreground="{StaticResource Muted}" LineHeight="23" Margin="0,12,0,24"/>
+     <TextBlock Text="解锁口令" FontSize="12" Margin="0,0,0,8"/><PasswordBox x:Name="Password" MaxLength="256" KeyDown="Password_KeyDown" AutomationProperties.Name="解锁口令"/>
+     <StackPanel x:Name="ConfirmPanel" Margin="0,18,0,0"><TextBlock Text="再次输入" FontSize="12" Margin="0,0,0,8"/><PasswordBox x:Name="ConfirmPassword" MaxLength="256" KeyDown="Password_KeyDown" AutomationProperties.Name="再次输入口令"/></StackPanel>
+     <TextBlock x:Name="UnlockError" Foreground="{StaticResource Accent}" Margin="0,14,0,0" LineHeight="22" Visibility="Collapsed"/><Button x:Name="UnlockButton" Content="创建并解锁" Style="{StaticResource Primary}" Margin="0,24,0,0" Padding="16,12" Click="Unlock_Click"/><TextBlock Text="口令不会保存或上传。遗忘后无法找回。" Foreground="{StaticResource Muted}" FontSize="11" LineHeight="21" Margin="0,16,0,0"/>
+    </StackPanel></Border>
+   </ScrollViewer>
+  </Grid>
+  <Border Grid.Row="2" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="24,0"><Grid VerticalAlignment="Center"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock x:Name="FooterStatus" Text="准备就绪 · 解锁后才会启动网络连接" FontSize="11" Foreground="{StaticResource Muted}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,0,20,0"/><TextBlock Grid.Column="1" Text="0.8.1 · 未经独立安全审计" FontSize="11" Foreground="{StaticResource Muted}"/></Grid></Border>
+  <Grid x:Name="Modal" Grid.RowSpan="3" Background="#66303540" Visibility="Collapsed"><Border Width="560" MaxHeight="550" Style="{StaticResource Dialog}" Padding="30" HorizontalAlignment="Center" VerticalAlignment="Center"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+   <TextBlock x:Name="ModalTitle" Text="添加联系人" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,16"/><TextBlock x:Name="ModalHint" Foreground="{StaticResource Muted}" LineHeight="24" Margin="0,0,0,20"/><TextBox x:Name="ModalInput" MaxLength="32768" MinHeight="98" MaxHeight="180" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="邀请链接或安全码"/><TextBlock x:Name="ModalStatus" Margin="0,12,0,0" Foreground="{StaticResource Muted}" LineHeight="22"/>
+   <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,26,0,0"><Button x:Name="ModalAux" Content="生成邀请" Click="ModalAux_Click" Margin="0,0,10,0"/><Button x:Name="ModalAction" Content="接受邀请" Style="{StaticResource Primary}" Click="ModalAction_Click" Margin="0,0,10,0"/><Button Content="关闭" Click="ModalClose_Click"/></StackPanel>
+  </StackPanel></ScrollViewer></Border></Grid>
+  <Grid x:Name="RelayPanel" Grid.RowSpan="3" Background="#66303540" Visibility="Collapsed"><Border Width="660" MaxHeight="550" Style="{StaticResource Dialog}" Padding="30" HorizontalAlignment="Center" VerticalAlignment="Center"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+   <TextBlock Text="消息中继设置" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,14"/><TextBlock x:Name="RelayCurrent" Foreground="{StaticResource Muted}" Margin="0,0,0,14"/><TextBlock Text="每行一个完整 smp:// 地址，自选列表最多 8 个。先测试，再启用。新建连接的接收中继从列表中选择；发消息仍可能访问对方的中继。已有联系人不会自动迁移。" LineHeight="23" Margin="0,0,0,16"/>
+   <TextBox x:Name="RelayInput" MaxLength="32768" Height="130" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" TextChanged="RelayInput_Changed" FontFamily="Consolas, Microsoft YaHei UI" AutomationProperties.Name="自定义消息中继地址"/><TextBlock Text="测试会经 Tor 连接服务器并尝试创建、删除临时消息队列。地址可能包含服务器访问密码，请勿公开分享。" FontSize="11" Foreground="{StaticResource Muted}" LineHeight="21" Margin="0,12,0,0"/><TextBlock x:Name="RelayStatus" LineHeight="23" Margin="0,12,0,0"/>
+   <WrapPanel HorizontalAlignment="Right" Margin="0,24,0,0"><Button x:Name="RelayRestoreButton" Content="恢复预设" Click="RelayRestore_Click" Padding="12,9" Margin="0,0,8,8"/><Button x:Name="RelayTestButton" Content="测试全部" Click="RelayTest_Click" Padding="12,9" Margin="0,0,8,8"/><Button x:Name="RelaySaveButton" Content="启用此列表" Click="RelaySave_Click" Style="{StaticResource Primary}" Padding="12,9" Margin="0,0,8,8"/><Button Content="关闭" Click="RelayClose_Click" Padding="12,9" Margin="0,0,0,8"/></WrapPanel>
+  </StackPanel></ScrollViewer></Border></Grid>
+ </Grid>
+</Window>
