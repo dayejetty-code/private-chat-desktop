@@ -75,6 +75,7 @@ internal static class SecurityTests
             Assert(((TextBox)window.FindName("RelayInput")).Text.Length==0 && ((UIElement)window.FindName("RelayPanel")).Visibility==Visibility.Collapsed,"Lock clears relay addresses and hides settings");
             Assert(input.Text.Length == 0 && ((TextBox)window.FindName("ModalInput")).Text.Length == 0 && list.ItemsSource == null, "Lock clears visible messages drafts invitation and contacts");
             Assert(((Button)window.FindName("SendButton")).IsEnabled == false, "Locked window cannot send");
+            Assert(((Button)window.FindName("FileButton")).IsEnabled == false, "Locked window cannot select or send files");
             Assert(((UIElement)window.FindName("HistoryBar")).Visibility == Visibility.Collapsed && !((Button)window.FindName("OlderButton")).IsEnabled, "Locked window hides history and disables pagination");
             input.Text = "SYNTHETIC-SESSION-LOCK";
             typeof(MainWindow).GetMethod("SessionChanged",BindingFlags.Instance|BindingFlags.NonPublic)!.Invoke(window,new object[]{window,new SessionSwitchEventArgs(SessionSwitchReason.SessionLock)});
@@ -181,7 +182,8 @@ internal static class SecurityTests
     {
         using var core=new CoreClient(); using var tor=new TorService();
         tor.Start(Path.Combine(Path.GetDirectoryName(marker)!,"parent-crash-tor"));
-        File.WriteAllText(marker,new JsonObject{["core"]=core.ProcessId,["tor"]=tor.ProcessId}.ToJsonString());
+        File.WriteAllText(marker+".tmp",new JsonObject{["core"]=core.ProcessId,["tor"]=tor.ProcessId}.ToJsonString());
+        File.Move(marker+".tmp",marker,true); // Publish only after the writer closes.
         Thread.Sleep(Timeout.Infinite); return 0;
     }
     public static async Task ParentCrashCheck(string root,Action<bool,string> assert)

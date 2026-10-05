@@ -73,7 +73,7 @@ internal static class AuditRegressionTests
         unlock();
         var disconnected = Field<CoreClient>(window, "core");
         int disconnectedPid = disconnected.ProcessId;
-        Field<Process>(disconnected, "process").StandardOutput.Dispose();
+        Field<SandboxedProcess>(disconnected, "isolated").Output.Dispose();
         // Windows anonymous-pipe reads can stay pending after local disposal.
         // A response wakes that read so the reader observes the broken stream.
         _ = disconnected.Command("/u").ContinueWith(t => { _ = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);

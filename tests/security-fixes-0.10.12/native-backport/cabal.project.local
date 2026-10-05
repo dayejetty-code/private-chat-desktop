@@ -1,0 +1,9 @@
+packages: ../parser-regression
+with-compiler: C:\Users\Lenovo\pc-native\ghc\ghc-9.6.3-x86_64-unknown-mingw32\bin\ghc.exe
+jobs: 2
+constraints: simplex-chat +client_library, simplexmq +client_library
+
+package direct-sqlcipher
+  flags: +openssl
+  extra-include-dirs: C:\Users\Lenovo\pc-native\openssl-3.0.15\include
+  extra-lib-dirs: C:\Users\Lenovo\pc-native\openssl-3.0.15

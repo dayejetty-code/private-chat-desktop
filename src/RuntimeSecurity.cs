@@ -35,6 +35,12 @@ internal static class RuntimeSecurity
         var library = LoadLibraryEx(Path.Combine(Base, "runtime", "core", "libsimplex.dll"), IntPtr.Zero, 0x100 | 0x800);
         return library != IntPtr.Zero ? library : throw new IOException("Cannot load pinned core");
     }
+    public static IntPtr LoadCrypto()
+    {
+        Verify("core");
+        var library = LoadLibraryEx(Path.Combine(Base, "runtime", "core", "libcrypto-3-x64.dll"), IntPtr.Zero, 0x100 | 0x800);
+        return library != IntPtr.Zero ? library : throw new IOException("Cannot load pinned cryptography runtime");
+    }
     [DllImport("kernel32.dll", SetLastError = true)] private static extern bool SetDefaultDllDirectories(uint flags);
     [DllImport("kernel32.dll")] private static extern int WerSetFlags(uint flags);
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] private static extern IntPtr LoadLibraryEx(string path, IntPtr file, uint flags);

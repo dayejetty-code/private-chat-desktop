@@ -1,0 +1,17 @@
+[
+  {
+    "name": "ghc-9.6.3.tar.xz",
+    "url": "https://downloads.haskell.org/~ghc/9.6.3/ghc-9.6.3-x86_64-unknown-mingw32.tar.xz",
+    "sha256": "0cc0e2d290a87c540268e62cc71f8eced2a24f621beeb524cce61bebf644f064"
+  },
+  {
+    "name": "cabal-3.10.2.0.zip",
+    "url": "https://downloads.haskell.org/~cabal/cabal-install-3.10.2.0/cabal-install-3.10.2.0-x86_64-windows.zip",
+    "sha256": "b09e335b2ebeafa1db5e1e5614e3e10fb37da230a36865d76646ab27b2f3f46b"
+  },
+  {
+    "name": "winlibs-13.1.0.zip",
+    "url": "https://github.com/brechtsanders/winlibs_mingw/releases/download/13.1.0-16.0.5-11.0.0-ucrt-r5/winlibs-x86_64-posix-seh-gcc-13.1.0-mingw-w64ucrt-11.0.0-r5.zip",
+    "sha256": "418e8a0175640e617ec6f6639bca8d3aeddb6a108391eaf312d1351d19375958"
+  }
+]

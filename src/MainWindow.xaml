@@ -73,7 +73,7 @@
      <Path Stroke="{StaticResource Accent}" StrokeThickness="1.6" Data="M 3,10 L 3,22 19,22 19,10 Z M 6,10 L 6,6 C 6,0 16,0 16,6 L 16,10 M 11,14 L 11,18" Width="22" Height="24" Margin="0,0,12,0"/>
      <TextBlock Text="Private Chat" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center"/><TextBlock Text="本地测试版" Foreground="{StaticResource Muted}" FontSize="11" Margin="16,0,0,0" VerticalAlignment="Center"/>
     </StackPanel>
-    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><TextBlock x:Name="NetworkLabel" Text="已锁定 · 未联网" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,18,0" FontSize="12"/><Button Content="帮助" Click="Help_Click" Style="{StaticResource Quiet}" Padding="12,6" Margin="0,0,6,0"/><Button x:Name="LockButton" Content="锁定" Click="Lock_Click" Visibility="Collapsed" Padding="12,6"/></StackPanel>
+    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><TextBlock x:Name="NetworkLabel" Text="已锁定 · 未联网" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,10,0" FontSize="12"/><Button x:Name="CacheButton" Content="附件缓存" Click="Cache_Click" Style="{StaticResource Quiet}" Padding="10,6" IsEnabled="False"/><Button x:Name="DeletionButton" Content="数据销毁" Click="Deletion_Click" Style="{StaticResource Quiet}" Padding="10,6"/><Button Content="帮助" Click="Help_Click" Style="{StaticResource Quiet}" Padding="12,6" Margin="0,0,6,0"/><Button x:Name="LockButton" Content="锁定" Click="Lock_Click" Visibility="Collapsed" Padding="12,6"/></StackPanel>
    </Grid>
   </Border>
   <Grid Grid.Row="1" x:Name="ChatView" Visibility="Collapsed">
@@ -82,7 +82,7 @@
     <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
      <Grid Margin="22,22,20,20"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="会话" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center"/><Button x:Name="AddButton" Grid.Column="1" Content="添加联系人" Click="Add_Click" Padding="9,7" FontSize="12"/></Grid>
      <Grid Grid.Row="1">
-      <ListBox x:Name="ContactsList" SelectionChanged="Contact_Selected"><ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Name}" FontSize="14" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding Detail}" Foreground="{StaticResource Muted}" FontSize="11" Margin="0,7,0,0"/></StackPanel></DataTemplate></ListBox.ItemTemplate></ListBox>
+      <ListBox x:Name="ContactsList" SelectionChanged="Contact_Selected"><ListBox.ItemTemplate><DataTemplate><Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="{Binding Name}" FontSize="14" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding Detail}" Foreground="{StaticResource Muted}" FontSize="11" Margin="0,7,0,0"/></StackPanel><Border Grid.Column="1" Background="{StaticResource Accent}" CornerRadius="10" Padding="6,2" MinWidth="22" VerticalAlignment="Top" Margin="8,0,0,0" Visibility="{Binding UnreadVisibility}" ToolTip="{Binding UnreadHelp}" AutomationProperties.Name="{Binding UnreadHelp}"><TextBlock Text="{Binding UnreadLabel}" Foreground="White" FontSize="11" TextAlignment="Center"/></Border></Grid></DataTemplate></ListBox.ItemTemplate></ListBox>
       <TextBlock x:Name="NoContacts" Text="还没有联系人。&#x0a;通过一次性邀请建立连接。" Margin="24,6" Foreground="{StaticResource Muted}" LineHeight="22" FontSize="12" IsHitTestVisible="False"/>
      </Grid>
      <StackPanel Grid.Row="2" Margin="22,12,22,18">
@@ -99,7 +99,7 @@
     <Grid x:Name="ReadingColumn" MaxWidth="840" Margin="24,0" HorizontalAlignment="Stretch">
      <Grid.RowDefinitions><RowDefinition Height="88"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
      <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="16,18">
-      <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel Margin="0,0,20,0"><TextBlock x:Name="ChatTitle" Text="你的私人会话" FontSize="20" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/><TextBlock x:Name="ChatDetail" Text="选择联系人，开始聊天。" Margin="0,6,0,0" Foreground="{StaticResource Muted}" FontSize="12" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/></StackPanel><Button x:Name="VerifyButton" Grid.Column="1" Content="核验安全码" Click="Verify_Click" Style="{StaticResource Quiet}" VerticalAlignment="Center" Visibility="Collapsed"/></Grid>
+      <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel Margin="0,0,12,0"><TextBlock x:Name="ChatTitle" Text="你的私人会话" FontSize="20" FontWeight="SemiBold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/><TextBlock x:Name="ChatDetail" Text="选择联系人，开始聊天。" Margin="0,6,0,0" Foreground="{StaticResource Muted}" FontSize="12" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/></StackPanel><StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button x:Name="RepairButton" Content="连接修复" Click="Repair_Click" Style="{StaticResource Quiet}" Padding="8,7" Visibility="Collapsed"/><Button x:Name="VerifyButton" Content="核验安全码" Click="Verify_Click" Style="{StaticResource Quiet}" Padding="8,7" Visibility="Collapsed"/></StackPanel></Grid>
      </Border>
      <Grid Grid.Row="1">
       <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
@@ -112,10 +112,11 @@
        </StackPanel>
       </ScrollViewer>
      </Grid>
-     <Grid x:Name="ComposerContent" Grid.Row="2" Margin="16,14,16,18"><Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+     <Grid x:Name="ComposerContent" Grid.Row="2" Margin="16,14,16,18"><Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
       <TextBox x:Name="MessageInput" MaxLength="12000" MinHeight="64" MaxHeight="140" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" PreviewKeyDown="Message_KeyDown" IsEnabled="False" FontSize="15" AutomationProperties.Name="消息内容"/>
       <Button x:Name="SendButton" Grid.Column="1" Content="发送" Style="{StaticResource Primary}" Margin="12,0,0,0" Padding="20,10" VerticalAlignment="Bottom" Height="40" Click="Send_Click" IsEnabled="False"/>
-      <TextBlock Grid.Row="1" Text="Ctrl + Enter 发送 · Enter 换行" Foreground="{StaticResource Muted}" FontSize="11" Margin="1,9,0,0"/>
+      <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="1,9,0,0"><Button x:Name="FileButton" DockPanel.Dock="Right" Content="发送 TXT" Style="{StaticResource Quiet}" Padding="10,4" FontSize="12" Click="File_Click" IsEnabled="False" ToolTip="仅发送 .txt 纯文本，最多 25 MB"/><TextBlock Text="Ctrl + Enter 发送 · Enter 换行" Foreground="{StaticResource Muted}" FontSize="11" VerticalAlignment="Center"/></DockPanel>
+      <Border x:Name="PendingSendNotice" Grid.Row="2" Grid.ColumnSpan="2" Background="#F1F3F8" CornerRadius="6" Padding="10" Margin="0,8,0,0" Visibility="Collapsed"><DockPanel><Button x:Name="ReviewSendButton" Content="已核对记录" DockPanel.Dock="Right" Click="ReviewSend_Click" Padding="8,5" Margin="10,0,0,0"/><TextBlock Text="有发送结果未知的消息。请先查看最新记录或向对方确认，再继续发送。" FontSize="12" VerticalAlignment="Center"/></DockPanel></Border>
      </Grid>
     </Grid>
    </Grid>
@@ -129,22 +130,61 @@
    </StackPanel>
    <ScrollViewer Grid.Column="1" x:Name="UnlockFormScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" VerticalContentAlignment="Center">
     <Border x:Name="UnlockCard" Style="{StaticResource Dialog}" Padding="28" VerticalAlignment="Center"><StackPanel>
-     <TextBlock x:Name="UnlockHeading" Text="创建本地资料库" FontSize="22" FontWeight="SemiBold"/><TextBlock x:Name="UnlockHint" Text="设置至少 12 个字符的口令。建议使用多个随机词组成的长口令。" Foreground="{StaticResource Muted}" LineHeight="23" Margin="0,12,0,24"/>
+     <TextBlock x:Name="UnlockHeading" Text="创建本地资料库" FontSize="22" FontWeight="SemiBold"/><TextBlock x:Name="UnlockHint" Text="设置至少 16 个字符的长口令。资料绑定当前 Windows 用户；重装系统或丢失系统密钥后可能无法恢复。本版不提供备份。" Foreground="{StaticResource Muted}" LineHeight="23" Margin="0,12,0,24"/>
      <TextBlock Text="解锁口令" FontSize="12" Margin="0,0,0,8"/><PasswordBox x:Name="Password" MaxLength="256" KeyDown="Password_KeyDown" AutomationProperties.Name="解锁口令"/>
      <StackPanel x:Name="ConfirmPanel" Margin="0,18,0,0"><TextBlock Text="再次输入" FontSize="12" Margin="0,0,0,8"/><PasswordBox x:Name="ConfirmPassword" MaxLength="256" KeyDown="Password_KeyDown" AutomationProperties.Name="再次输入口令"/></StackPanel>
-     <TextBlock x:Name="UnlockError" Foreground="{StaticResource Accent}" Margin="0,14,0,0" LineHeight="22" Visibility="Collapsed"/><Button x:Name="UnlockButton" Content="创建并解锁" Style="{StaticResource Primary}" Margin="0,24,0,0" Padding="16,12" Click="Unlock_Click"/><TextBlock Text="口令不会保存或上传。遗忘后无法找回。" Foreground="{StaticResource Muted}" FontSize="11" LineHeight="21" Margin="0,16,0,0"/>
+     <TextBlock x:Name="UnlockError" Foreground="{StaticResource Accent}" Margin="0,14,0,0" LineHeight="22" Visibility="Collapsed"/><Button x:Name="UnlockButton" Content="创建并解锁" Style="{StaticResource Primary}" Margin="0,24,0,0" Padding="16,12" Click="Unlock_Click"/><TextBlock Text="口令不会保存或上传。没有备份恢复入口，口令或密钥丢失后无法找回。" Foreground="{StaticResource Muted}" FontSize="11" LineHeight="21" Margin="0,16,0,0"/>
     </StackPanel></Border>
    </ScrollViewer>
   </Grid>
-  <Border Grid.Row="2" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="24,0"><Grid VerticalAlignment="Center"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock x:Name="FooterStatus" Text="准备就绪 · 解锁后才会启动网络连接" FontSize="11" Foreground="{StaticResource Muted}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,0,20,0"/><TextBlock Grid.Column="1" Text="0.8.1 · 未经独立安全审计" FontSize="11" Foreground="{StaticResource Muted}"/></Grid></Border>
+  <Border Grid.Row="2" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="24,0"><Grid VerticalAlignment="Center"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock x:Name="FooterStatus" Text="准备就绪 · 解锁后才会启动网络连接" FontSize="11" Foreground="{StaticResource Muted}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,0,20,0"/><TextBlock Grid.Column="1" Text="0.10.11 · 未经独立安全审计" FontSize="11" Foreground="{StaticResource Muted}"/></Grid></Border>
   <Grid x:Name="Modal" Grid.RowSpan="3" Background="#66303540" Visibility="Collapsed"><Border Width="560" MaxHeight="550" Style="{StaticResource Dialog}" Padding="30" HorizontalAlignment="Center" VerticalAlignment="Center"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
    <TextBlock x:Name="ModalTitle" Text="添加联系人" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,16"/><TextBlock x:Name="ModalHint" Foreground="{StaticResource Muted}" LineHeight="24" Margin="0,0,0,20"/><TextBox x:Name="ModalInput" MaxLength="32768" MinHeight="98" MaxHeight="180" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="邀请链接或安全码"/><TextBlock x:Name="ModalStatus" Margin="0,12,0,0" Foreground="{StaticResource Muted}" LineHeight="22"/>
    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,26,0,0"><Button x:Name="ModalAux" Content="生成邀请" Click="ModalAux_Click" Margin="0,0,10,0"/><Button x:Name="ModalAction" Content="接受邀请" Style="{StaticResource Primary}" Click="ModalAction_Click" Margin="0,0,10,0"/><Button Content="关闭" Click="ModalClose_Click"/></StackPanel>
+  </StackPanel></ScrollViewer></Border></Grid>
+  <Grid x:Name="RepairPanel" Grid.RowSpan="3" Background="#66303540" Visibility="Collapsed"><Border Width="590" MaxHeight="520" Style="{StaticResource Dialog}" Padding="30" HorizontalAlignment="Center" VerticalAlignment="Center"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+   <TextBlock Text="连接修复" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,18"/>
+   <TextBlock x:Name="RepairStatus" LineHeight="25" Margin="0,0,0,20"/>
+   <TextBlock Text="重新连接和修复始终经过 Tor。仅在核心允许时修复加密连接，不会删除联系人或聊天记录。修复后请再次核对安全码；未送达的内容仍需检查发送状态。" Foreground="{StaticResource Muted}" LineHeight="23" FontSize="12"/>
+   <WrapPanel Margin="0,24,0,0" HorizontalAlignment="Right"><Button x:Name="RepairRefreshButton" Content="刷新状态" Click="RepairRefresh_Click" Margin="0,0,8,8"/><Button x:Name="RepairNetworkButton" Content="重连 Tor" Click="RepairNetwork_Click" Margin="0,0,8,8"/><Button x:Name="RepairSyncButton" Content="修复加密连接" Click="RepairSync_Click" Margin="0,0,8,8" IsEnabled="False"/><Button Content="关闭" Click="RepairClose_Click" Margin="0,0,0,8"/></WrapPanel>
   </StackPanel></ScrollViewer></Border></Grid>
   <Grid x:Name="RelayPanel" Grid.RowSpan="3" Background="#66303540" Visibility="Collapsed"><Border Width="660" MaxHeight="550" Style="{StaticResource Dialog}" Padding="30" HorizontalAlignment="Center" VerticalAlignment="Center"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
    <TextBlock Text="消息中继设置" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,14"/><TextBlock x:Name="RelayCurrent" Foreground="{StaticResource Muted}" Margin="0,0,0,14"/><TextBlock Text="每行一个完整 smp:// 地址，自选列表最多 8 个。先测试，再启用。新建连接的接收中继从列表中选择；发消息仍可能访问对方的中继。已有联系人不会自动迁移。" LineHeight="23" Margin="0,0,0,16"/>
    <TextBox x:Name="RelayInput" MaxLength="32768" Height="130" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" TextChanged="RelayInput_Changed" FontFamily="Consolas, Microsoft YaHei UI" AutomationProperties.Name="自定义消息中继地址"/><TextBlock Text="测试会经 Tor 连接服务器并尝试创建、删除临时消息队列。地址可能包含服务器访问密码，请勿公开分享。" FontSize="11" Foreground="{StaticResource Muted}" LineHeight="21" Margin="0,12,0,0"/><TextBlock x:Name="RelayStatus" LineHeight="23" Margin="0,12,0,0"/>
    <WrapPanel HorizontalAlignment="Right" Margin="0,24,0,0"><Button x:Name="RelayRestoreButton" Content="恢复预设" Click="RelayRestore_Click" Padding="12,9" Margin="0,0,8,8"/><Button x:Name="RelayTestButton" Content="测试全部" Click="RelayTest_Click" Padding="12,9" Margin="0,0,8,8"/><Button x:Name="RelaySaveButton" Content="启用此列表" Click="RelaySave_Click" Style="{StaticResource Primary}" Padding="12,9" Margin="0,0,8,8"/><Button Content="关闭" Click="RelayClose_Click" Padding="12,9" Margin="0,0,0,8"/></WrapPanel>
   </StackPanel></ScrollViewer></Border></Grid>
+
+  <Grid x:Name="CachePanel" Grid.RowSpan="3" Background="#66303540" Visibility="Collapsed">
+   <Border Width="580" MaxHeight="530" Margin="24" Style="{StaticResource Dialog}" Padding="30" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+     <TextBlock Text="附件缓存" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,18"/>
+     <TextBlock x:Name="CacheUsage" FontSize="15" LineHeight="25"/>
+     <TextBlock Text="新增附件的空间预算为 512 MB，包含加密副本、临时文件和未完成任务的保守预留。预留按任务完整大小估算，可能高于最终占用。" Foreground="{StaticResource Muted}" FontSize="12" LineHeight="22" Margin="0,12,0,20"/>
+     <Border BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="0,18,0,0"><TextBlock x:Name="CacheDetails" LineHeight="25"/></Border>
+     <TextBlock Text="清理会移除已结束附件的本机副本；聊天文字和进行中的任务保留。请先另存为需要保留的附件。" Foreground="{StaticResource Muted}" FontSize="12" LineHeight="22" Margin="0,18,0,0"/>
+     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0"><Button x:Name="CacheCleanButton" Content="清理并锁定" Click="CacheClean_Click" IsEnabled="False" Margin="0,0,10,0"/><Button x:Name="CacheCloseButton" Content="关闭" Click="CacheClose_Click" Style="{StaticResource Primary}"/></StackPanel>
+    </StackPanel></ScrollViewer></Border>
+  </Grid>
+  <Grid x:Name="DeletionPanel" Grid.RowSpan="3" Background="#66303540" Visibility="Collapsed">
+   <Border Width="670" MaxHeight="550" Margin="24" Style="{StaticResource Dialog}" Padding="28" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+     <TextBlock Text="销毁账号与聊天数据" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,12"/>
+     <TextBlock Text="先清除本机密钥，再完整覆写、核验并删除身份、联系人、聊天记录、附件、Tor 缓存及应用内部旧副本。成功后应用自动关闭以结束本次进程；再次打开可创建新身份。" LineHeight="23"/>
+     <TextBlock x:Name="DeletionLimits" Text="已启用密钥保护的资料先清除本机密钥，再完整覆写、核验并删除文件，不放入回收站，不能从应用撤销。但不保证 SSD 残留、系统快照或磁盘取证无法恢复：若旧密钥文件也被恢复，配合口令仍可能解密。迁移前的旧格式副本不受新密钥保护。不清除对方设备、消息中继、云盘或其他设备上的副本。另存的备份和导出的 TXT 不会随账号自动删除。保留备份和口令，旧身份与记录仍可能恢复；导出的 TXT 仍可读取。" Foreground="{StaticResource Muted}" FontSize="12" LineHeight="22" Margin="0,12,0,12"/>
+     <TextBlock x:Name="KeyStatus" FontSize="12" LineHeight="22" Margin="0,0,0,10"/>
+     <StackPanel x:Name="DeletionPasswordPanel"><TextBlock Text="当前资料库口令（用于加密升级或身份销毁验证）" FontSize="12" Margin="0,0,0,7"/><PasswordBox x:Name="DeletionPassword" MaxLength="256" AutomationProperties.Name="销毁前验证资料库口令"/></StackPanel>
+     <Button x:Name="KeyEnableButton" Content="升级本地加密保护" Click="KeyEnable_Click" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+     <Button x:Name="DeletionProfileButton" Content="检查本机资料" Click="DeletionProfile_Click" HorizontalAlignment="Left" Margin="0,12,0,12"/>
+     <TextBlock x:Name="DeletionStatus" LineHeight="22" Margin="0,4,0,10" AutomationProperties.LiveSetting="Polite"/>
+     <StackPanel x:Name="DeletionConfirmArea" Visibility="Collapsed">
+      <TextBlock x:Name="DeletionSummary" LineHeight="22" Margin="0,0,0,8"/>
+      <ListBox x:Name="DeletionEntries" MaxHeight="120" BorderBrush="{StaticResource Line}" BorderThickness="1" Padding="4" ScrollViewer.VerticalScrollBarVisibility="Auto"><ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" FontSize="11" TextWrapping="Wrap"/></DataTemplate></ListBox.ItemTemplate></ListBox>
+      <CheckBox x:Name="DeletionAcknowledged" Margin="0,14,0,10" Checked="DeletionConfirm_Changed" Unchecked="DeletionConfirm_Changed"><TextBlock Text="我已核对清单，理解此操作不能从应用撤销，也不等于介质安全擦除。" TextWrapping="Wrap"/></CheckBox>
+      <TextBlock x:Name="DeletionPhraseHint" Margin="0,0,0,7" FontSize="12"/><TextBox x:Name="DeletionPhrase" MaxLength="24" TextChanged="DeletionConfirm_Changed" AutomationProperties.Name="销毁确认文字"/>
+     </StackPanel>
+     <WrapPanel HorizontalAlignment="Right" Margin="0,18,0,0"><Button x:Name="DeletionExecuteButton" Content="销毁账号与聊天数据" Foreground="#9B2828" BorderBrush="#BD8585" IsEnabled="False" Click="DeletionExecute_Click" Margin="0,0,10,8"/><Button x:Name="DeletionCloseButton" Content="关闭" Click="DeletionClose_Click" Margin="0,0,0,8"/></WrapPanel>
+    </StackPanel></ScrollViewer>
+   </Border>
+  </Grid>
  </Grid>
 </Window>

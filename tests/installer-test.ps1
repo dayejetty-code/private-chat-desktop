@@ -1,4 +1,4 @@
-param([string]$Version='0.8.1')
+param([string]$Version='0.10.4')
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 if($Version -notmatch '^\d+\.\d+\.\d+$'){throw 'Invalid version'}
@@ -25,6 +25,20 @@ function RunSetup([string]$log){
 }
 $script:worker=$null
 function StartWorker {
+ if([version]$Version -ge [version]'0.10.4') {
+  $info=[Diagnostics.ProcessStartInfo]::new((Join-Path $root 'tests/network-isolation/probe/Probe.exe'))
+  $info.ArgumentList.Add('--installer-broker');$info.ArgumentList.Add((Join-Path $install 'PrivateChat.exe'))
+  $info.UseShellExecute=$false;$info.CreateNoWindow=$true
+  $info.RedirectStandardInput=$true;$info.RedirectStandardOutput=$true;$info.RedirectStandardError=$true
+  $info.StandardInputEncoding=[Text.UTF8Encoding]::new($false);$info.StandardOutputEncoding=[Text.Encoding]::UTF8
+  $info.Environment['DOTNET_ROOT']='C:\PrivateChat-Missing-Runtime'
+  $script:broker=[Diagnostics.Process]::Start($info)
+  $script:stderr=$script:broker.StandardError.ReadToEndAsync()
+  $hello=$script:broker.StandardOutput.ReadLineAsync()
+  if(-not $hello.Wait(15000) -or $null -eq $hello.Result) { throw 'Installed sandbox did not start' }
+  $script:worker=[Diagnostics.Process]::GetProcessById(($hello.Result|ConvertFrom-Json).workerPid)
+  return
+ }
  $info=[Diagnostics.ProcessStartInfo]::new((Join-Path $install 'PrivateChat.exe'),'--worker')
  $info.UseShellExecute=$false;$info.CreateNoWindow=$true
  $info.RedirectStandardInput=$true;$info.RedirectStandardOutput=$true;$info.RedirectStandardError=$true
@@ -34,15 +48,21 @@ function StartWorker {
  $script:stderr=$script:worker.StandardError.ReadToEndAsync()
 }
 function StopWorker {
+ if($script:broker) {
+  try{$script:broker.StandardInput.Close();if(-not $script:broker.WaitForExit(8000)){$script:broker.Kill($true);$script:broker.WaitForExit()}}
+  finally{$script:broker.Dispose();$script:broker=$null;if($script:worker){$script:worker.Dispose();$script:worker=$null}}
+  return
+ }
  if($script:worker){
   try{$script:worker.StandardInput.Close();if(-not $script:worker.WaitForExit(8000)){$script:worker.Kill($true);$script:worker.WaitForExit()}}
   finally{$script:worker.Dispose();$script:worker=$null}
  }
 }
 function CallCore($request){
- $worker.StandardInput.WriteLine(($request|ConvertTo-Json -Depth 10 -Compress));$worker.StandardInput.Flush()
+ $pipeProcess=if($script:broker){$script:broker}else{$worker}
+ $pipeProcess.StandardInput.WriteLine(($request|ConvertTo-Json -Depth 10 -Compress));$pipeProcess.StandardInput.Flush()
  do {
-  $line=$worker.StandardOutput.ReadLineAsync()
+  $line=$pipeProcess.StandardOutput.ReadLineAsync()
   if(-not $line.Wait(15000)){throw 'Installed worker timed out'}
   if($null -eq $line.Result){throw 'Installed worker disconnected'}
   $response=$line.Result|ConvertFrom-Json

@@ -1,0 +1,43 @@
+[
+  {
+    "sha256": "23c666d0edf20f14249b3d8f0368acaee9ab585b09e1de82107c66e1f3ec9533",
+    "scope": "Upstream-matching native build input only; shipped runtime remains pinned OpenSSL 3.5.9"
+  },
+  {
+    "name": "ExtUtils-MakeMaker-7.78",
+    "version": "7.78",
+    "download_url": "https://cpan.metacpan.org/authors/id/B/BI/BINGOS/ExtUtils-MakeMaker-7.78.tar.gz",
+    "checksum_sha256": "43b33c20f8d82dba7cc48f8cd702f8fc9811e9d07880886dfd31b7077bd4a3a6"
+  },
+  {
+    "name": "Locale-Maketext-Simple-0.21",
+    "version": "0.21",
+    "download_url": "https://cpan.metacpan.org/authors/id/J/JE/JESSE/Locale-Maketext-Simple-0.21.tar.gz",
+    "checksum_sha256": "b009ff51f4fb108d19961a523e99b4373ccf958d37ca35bf1583215908dca9a9"
+  },
+  {
+    "name": "Pod-Escapes-1.07",
+    "download_url": "https://cpan.metacpan.org/authors/id/N/NE/NEILB/Pod-Escapes-1.07.tar.gz",
+    "checksum_sha256": "dbf7c827984951fb248907f940fd8f19f2696bc5545c0a15287e0fbe56a52308"
+  },
+  {
+    "name": "Pod-Perldoc-3.28",
+    "download_url": "https://cpan.metacpan.org/authors/id/M/MA/MALLEN/Pod-Perldoc-3.28.tar.gz",
+    "checksum_sha256": "cc41e605b8e13c40a8ee6504ff46347b5ba7fbd92203b3bb055422051befc64d"
+  },
+  {
+    "name": "Pod-Simple-3.48",
+    "download_url": "https://cpan.metacpan.org/authors/id/K/KH/KHW/Pod-Simple-3.48.tar.gz",
+    "checksum_sha256": "3297cf3c078de9d8297942423ec6ab59e85e30dfb38b782242699e386727c63a"
+  },
+  {
+    "name": "podlators-v6.1.1",
+    "download_url": "https://cpan.metacpan.org/authors/id/R/RR/RRA/podlators-v6.1.1.tar.gz",
+    "checksum_sha256": "709a7dc4a2259683eb2f89e085ec70cf743710d950510e489ec6ddca3eb80c68"
+  },
+  {
+    "name": "Pod-Usage-2.05",
+    "download_url": "https://cpan.metacpan.org/authors/id/M/MA/MAREKR/Pod-Usage-2.05.tar.gz",
+    "checksum_sha256": "100c27908757c56ebfeca8b7bf15a9867e449df663ff013de3855d183dfbea30"
+  }
+]

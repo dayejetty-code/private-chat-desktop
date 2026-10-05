@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>WinExe</OutputType><TargetFramework>net8.0-windows</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><PlatformTarget>x64</PlatformTarget><DefineConstants>ENABLE_QA</DefineConstants><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="../../src/NetworkSandbox.cs" /><Compile Include="../../src/CoreClient.cs" /><Compile Include="../../src/RuntimeSecurity.cs" />
+    <Compile Include="../../src/TorService.cs" /><Compile Include="../../src/FileTransfer.cs" /><Compile Include="../../src/FileCache.cs" /><Compile Include="../../src/TextDocument.cs" />
+    <EmbeddedResource Include="../../dist-v0.10.4/runtime-manifest.json" LogicalName="PrivateChat.RuntimeManifest" />
+  </ItemGroup>
+</Project>
+

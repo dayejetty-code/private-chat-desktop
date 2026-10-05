@@ -1,0 +1,40 @@
+{
+  "simplex": {
+    "version": "7.1.0-beta.6",
+    "source": "https://github.com/simplex-chat/simplex-chat/releases/tag/v7.1.0-beta.6",
+    "archive": "simplex-desktop-windows-x86_64.msi",
+    "sha256": "7b7c2851ae31c3d591fd383a836eb9f1661b934d5549f77ff6c5abaaf4dc4246",
+    "nativeFiles": {
+      "libsimplex.dll": "12f3730fc6f686f7ea1707289d40da7392947654a99301d982334c6b573763b7",
+      "libcrypto-3-x64.dll": "7bbcd66907c5b33b78c63141885a6528a9c8304d2f53462fb866ae132082b5f9"
+    },
+    "authenticode": "not-signed; release SHA256 checked",
+    "nativeDirectory": "vendor/simplex-7.1.0-beta.6-extracted/SimpleX/app/resources",
+    "parserFix": "https://github.com/simplex-chat/simplex-chat/commit/33e3d94328dcd7f57611acedf463e1a27efc3e57"
+  },
+  "tor": {
+    "bundleVersion": "15.0.24",
+    "torVersion": "0.4.9.13",
+    "source": "https://dist.torproject.org/torbrowser/15.0.24/tor-expert-bundle-windows-x86_64-15.0.24.tar.gz",
+    "sha256": "e9dc6ccc93cd6afa507193f4de284d6424233ff5102155cd2c94b259e8a22b65",
+    "signature": "VALIDSIG",
+    "primaryFingerprint": "EF6E286DDA85EA2A4BA7DE684E2C6E8793298290",
+    "signingSubkey": "022DA248432D2A0E0F54E65E316C1FACD62D07D9"
+  },
+  "buildSdk": {
+    "version": "10.0.401",
+    "source": "https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.401/dotnet-sdk-10.0.401-win-x64.zip",
+    "sha512": "24b670ad3d923bfcf47df6c3b034152398b42f6dbc388e10d783aee1cfb5e5817d399fc0ae2a12cfa822a55e61d34830ccb15c50ef6efee437ab874bb7c79430"
+  },
+  "openssl": {
+    "version": "3.5.9",
+    "source": "https://kb.firedaemon.com/support/solutions/articles/4000121705",
+    "package": "https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.9.zip",
+    "packageSha256": "76da391395be029b44794857b9ff380255e02a0960a98314cd3f6a6816d82696",
+    "libraryPath": "vendor/openssl-3.5.9/x64/bin/libcrypto-3-x64.dll",
+    "librarySha256": "5268a29c9a5e353770b894f3dbd148ee8c60971aa1620713c54d8e56563d0aca",
+    "licensePath": "vendor/openssl-3.5.9/LICENSE.txt",
+    "signerThumbprint": "C7FE6BFD5466557472B379DE462A5BF44735FDC8",
+    "provenance": "FireDaemon Windows x64 LTS distribution; publisher HTTPS archive SHA256 and valid EV Authenticode signature verified; OpenSSL 3.5 supported until 2030-04-08"
+  }
+}

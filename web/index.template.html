@@ -55,9 +55,9 @@
 
       <section id="questions" class="questions" aria-labelledby="questions-title">
         <div class="section-head"><h2 id="questions-title">下载前，了解这些。</h2></div>
-        <details><summary>现在可以用来做什么？</summary><p>当前支持一对一文字聊天、一次性邀请、安全码核验、历史消息翻页及自定义中继。附件、群聊、通话和多设备同步暂未提供。跨电脑、不同网络及长时间使用的验证仍在进行。</p></details>
+        <details><summary>现在可以用来做什么？</summary><p>当前支持一对一文字聊天、加密 TXT 文件传输（最多 25 MB）、一次性邀请、安全码核验、未读提示、失败重试、连接修复及自定义中继。发送的文件自动使用随机文件名。群聊、通话和多设备同步暂未提供。0.10.12 保留稳定内核并回移解析器安全补丁；完整网络抓取、长时间运行、睡眠恢复及真实跨电脑文件验收仍需继续验证。</p></details>
         <details><summary>Windows 提示“未知发布者”，怎么办？</summary><p>当前测试版尚未取得发布者代码签名。请确认下载链接来自本项目，并核对安装包的 SHA-256。不要关闭 Windows 安全防护；如果不能确认文件来源，请停止安装。</p></details>
-        <details><summary>更新或卸载会删除聊天记录吗？</summary><p>安装程序只更新程序文件，卸载保留 <code>%LOCALAPPDATA%\PrivateChatDesktop</code> 中的本地资料库。当前没有备份恢复界面，请不要删除资料库。遗忘口令无法找回。</p></details>
+        <details><summary>更新或卸载会删除聊天记录吗？</summary><p>安装程序只更新程序文件，卸载保留 <code>%LOCALAPPDATA%\PrivateChatDesktop</code> 中的本地资料库。本版不提供备份和恢复功能。新建或已升级的资料同时依赖聊天口令与当前 Windows 用户密钥；遗忘口令、重装 Windows 或丢失系统密钥可能造成永久丢失。应用内主动销毁身份会删除本机聊天资料，但不删除另存的备份或导出文件。</p></details>
         <details><summary>为什么连接需要等待？</summary><p>启动后需要建立 Tor 通道，连接时间受网络影响。可以在应用中选择网桥，或切换为“公共域名（经 Tor）”入口后重连。后者依然经过 Tor；通道建立并不代表消息已经送达。</p></details>
         <details><summary>聊天内容能保证绝对不泄露吗？</summary><p>不能。加密无法保护已被控制的设备，也无法阻止对方保存消息或所有流量关联分析。本项目尚未完成独立安全审计，不应把测试通过理解为安全保证。</p></details>
         <details><summary>如何核对安装文件？</summary><p>下载校验文件后，在 PowerShell 中执行下方命令，将输出与校验文件比较。SHA-256 用于核对文件完整性，不能替代发布者签名。</p><pre><code>Get-FileHash .\{{FILENAME}} -Algorithm SHA256</code></pre><p class="hash">本版本 SHA-256：<code>{{SHA256}}</code></p></details>

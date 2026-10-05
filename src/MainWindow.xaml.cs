@@ -41,6 +41,7 @@ public partial class MainWindow : Window
     public MainWindow(string dataRoot)
     {
         InitializeComponent(); this.dataRoot = dataRoot;
+        Closing += DeletionClosing;
         privateClipboard.Attach(MessageInput); privateClipboard.Attach(ModalInput); privateClipboard.Attach(RelayInput);
         SourceInitialized += (_, _) =>
         {
@@ -57,13 +58,16 @@ public partial class MainWindow : Window
         timer.Tick += async (_, _) =>
         {
             if (core == null) return;
+            try { core.CheckIsolation(); }
+            catch { Lock(); ShowUnlockError("Windows 网络隔离状态已变化，应用已锁定。请开启 Windows 防火墙并移除本应用的回环豁免后重新解锁。"); return; }
             if (DateTime.UtcNow - lastInput > TimeSpan.FromMinutes(5)) { Lock(); return; }
             if (!online && tor != null && DateTime.UtcNow - networkStarted > TimeSpan.FromSeconds(90))
                 FooterStatus.Text = "Tor 连接仍未完成。可切换网桥后重新连接；不会自动改为直连。";
             if (!busy && online) await Refresh(true);
         };
-        timer.Start(); SetUnlockText();
-        Closed += (_, _) => { closing = true; timer.Stop(); SystemEvents.SessionSwitch -= SessionChanged; SystemEvents.PowerModeChanged -= PowerChanged; Lock(); privateClipboard.Dispose(); };
+        readTimer.Tick += async (_, _) => await MarkVisibleRead();
+        readTimer.Start(); timer.Start(); SetUnlockText();
+        Closed += (_, _) => { closing = true; readTimer.Stop(); timer.Stop(); SystemEvents.SessionSwitch -= SessionChanged; SystemEvents.PowerModeChanged -= PowerChanged; Lock(); privateClipboard.Dispose(); };
         Loaded += (_, _) => Password.Focus();
     }
     private void SessionChanged(object sender, SessionSwitchEventArgs e) { if (e.Reason is SessionSwitchReason.SessionLock or SessionSwitchReason.SessionLogoff) Dispatcher.BeginInvoke(Lock); }
@@ -75,21 +79,30 @@ public partial class MainWindow : Window
     }
     private void SetUnlockText()
     {
+        if (ProfileDeletion.Pending(dataRoot))
+        {
+            UnlockHeading.Text = "删除尚未完成"; UnlockHint.Text = "应用保持离线。打开顶部“数据销毁”，重新检查并确认剩余资料；不会自动恢复旧副本。";
+            UnlockButton.Content = "暂不可解锁"; UnlockButton.IsEnabled = false; ConfirmPanel.Visibility = Visibility.Collapsed; return;
+        }
         UnlockHeading.Text = IsNew ? "创建本地资料库" : "解锁本地资料库";
         UnlockButton.Content = IsNew ? "创建并解锁" : "解锁";
-        UnlockHint.Text = IsNew ? "设置至少 12 个字符的口令。建议使用多个随机词组成的长口令。" : "输入这台电脑上资料库的口令。聊天记录将在本机解密。";
+        UnlockHint.Text = IsNew ? "设置至少 16 个字符的长口令。资料绑定当前 Windows 用户；重装系统或丢失系统密钥后可能无法恢复。本版不提供备份。" : "输入这台电脑上资料库的口令。聊天记录将在本机解密。";
         ConfirmPanel.Visibility = IsNew ? Visibility.Visible : Visibility.Collapsed;
+        UnlockButton.IsEnabled = !busy && !cacheCleaning && !DeletionBlocksUnlock;
     }
     private async void Unlock_Click(object sender, RoutedEventArgs e)
     {
-        if (busy || core != null || !captureProtected) return;
+        if (busy || cacheCleaning || DeletionBlocksUnlock || Directory.Exists(Path.Combine(dataRoot, ".restore-transaction")) || core != null || !captureProtected) return;
         string password = Password.Password;
-        if (password.Length < 12) { ShowUnlockError("口令至少需要 12 个字符。"); return; }
+        if (password.Length < (IsNew ? ProfileKeys.NewPasswordMinimum : 12)) { ShowUnlockError(IsNew ? "新资料库口令至少需要 16 个字符。" : "请输入原资料库口令，至少 12 个字符。"); return; }
         if (IsNew && password != ConfirmPassword.Password) { ShowUnlockError("两次输入的口令不一致。"); return; }
         int turn = ++epoch; busy = true; UnlockButton.IsEnabled = false; UnlockError.Visibility = Visibility.Collapsed;
         try
         {
             FooterStatus.Text = "正在打开加密数据库…";
+            if (IsNew && !ProfileKeys.Exists(dataRoot))
+                await Task.Run(() => ProfileKeys.CreateNew(dataRoot, password));
+            if (turn != epoch) return;
             core = new CoreClient();
             var current = core;
             current.Exited += () => Dispatcher.BeginInvoke(() => { if (epoch == turn) { Lock(); ShowUnlockError("加密核心已停止。请重新解锁。"); } });
@@ -100,7 +113,7 @@ public partial class MainWindow : Window
                 string type = value["result"]?["type"]?.ToString() ?? "";
                 if (!history.IsLatest && selected != null && type.Contains("chatItem", StringComparison.OrdinalIgnoreCase))
                     HistoryStatus.Text = "会话有更新 · 回到最新查看";
-                if (type.Contains("chatItem", StringComparison.OrdinalIgnoreCase) || type.Contains("contact", StringComparison.OrdinalIgnoreCase)) await Refresh(true);
+                if (type.Contains("chatItem", StringComparison.OrdinalIgnoreCase) || type.Contains("contact", StringComparison.OrdinalIgnoreCase) || type.Contains("file", StringComparison.OrdinalIgnoreCase)) await Refresh(true);
             });
             var migration = await current.Init(Path.Combine(dataRoot, "chat"), password);
             if (turn != epoch) return;
@@ -116,6 +129,7 @@ public partial class MainWindow : Window
             await StartNetwork();
             await Refresh(true);
         }
+        catch (NetworkIsolationException) { if (turn == epoch) { Lock(); ShowUnlockError("Windows 网络隔离未能启用，已停止启动。请确认 Windows 防火墙已开启；应用不会切换到不受限制的连接方式。"); } }
         catch (InvalidDataException) { if (turn == epoch) { Lock(); ShowUnlockError("口令不正确，或资料库无法打开。已有数据已保留。"); } }
         catch { if (turn == epoch) { Lock(); ShowUnlockError("启动未完成。请确认程序的 runtime 文件夹完整，然后重试。"); } }
         finally { password = ""; if (turn == epoch) { Password.Clear(); ConfirmPassword.Clear(); busy = false; UnlockButton.IsEnabled = true; UpdateActions(); } }
@@ -139,6 +153,7 @@ public partial class MainWindow : Window
         if (!PrivacyPolicy.IsStrict(readBack["networkConfig"]!, service.Port)) throw new IOException("Unsafe network config");
         // Start the core against an as-yet unopened SOCKS port. Apply local privacy
         // preferences before starting Tor, so no relay can be contacted first.
+        await FileTransfer.Configure(current, dataRoot);
         await current.Result("/_start main=on snd_files=off");
         await current.Result("/_set receipts contacts " + userId + " off clear_overrides=on");
         await current.Result("/_set accept member contacts " + userId + " off");
@@ -151,11 +166,11 @@ public partial class MainWindow : Window
             {
                 try
                 {
-                    await current.Result("/_start main=on snd_files=off");
+                    await current.Result("/_start main=on snd_files=on");
                     if (turn != epoch || tor != service || !service.Ready) return;
                     online = true; NetworkLabel.Text = "Tor 通道已建立"; NetworkLabel.Foreground = accent;
                     ConnectionHelp.Text = "Tor 通道已建立。点击左侧“添加联系人”，分享或粘贴一次性邀请；联系人连接可能仍需等待。";
-                    FooterStatus.Text = "Tor 通道已建立 · 联系人连接单独隔离";
+                    FooterStatus.Text = "Tor 通道已建立 · Windows 网络隔离已启用";
                     UpdateActions(); await Refresh(true);
                 }
                 catch { if (turn == epoch) { Lock(); ShowUnlockError("加密核心启动未完成，已锁定。请重新解锁。"); } }
@@ -184,6 +199,10 @@ public partial class MainWindow : Window
     internal void EmergencyLock() => Lock();
     private void Lock()
     {
+        CloseDeletion();
+        ResetConversationTools();
+        CloseCache();
+        ++fileContextVersion; fileButtons.Clear();
         CloseRelays();
         conversation.Invalidate(); history.Reset(); historyLoading = false; scrollToLatest = true;
         HistoryStatus.Text = "";
@@ -195,7 +214,7 @@ public partial class MainWindow : Window
         Password.Clear(); ConfirmPassword.Clear(); ModalInput.Clear(); ModalStatus.Text = ""; Modal.Visibility = Visibility.Collapsed;
         privateClipboard.ClearOwned(); ChatView.Visibility = Visibility.Collapsed; UnlockView.Visibility = Visibility.Visible; LockButton.Visibility = Visibility.Collapsed;
         NetworkLabel.Text = "已锁定 · 未联网"; NetworkLabel.Foreground = muted; FooterStatus.Text = "已结束聊天核心和 Tor 进程";
-        SetUnlockText(); UnlockButton.IsEnabled = true; UpdateActions(); if (!closing) Password.Focus();
+        SetUnlockText(); UnlockButton.IsEnabled = !cacheCleaning && !DeletionBlocksUnlock; UpdateActions(); if (!closing) Password.Focus();
     }
     private bool CanNetwork => online && tor?.Ready == true && core != null;
     private void UpdateActions()
@@ -209,8 +228,12 @@ public partial class MainWindow : Window
         NewerButton.IsEnabled = core != null && !historyLoading && history.HasNewer;
         LatestButton.IsEnabled = core != null && selected != null && !historyLoading;
         RelaySettingsButton.IsEnabled = core != null && !busy;
+        CacheButton.IsEnabled = core != null && !busy;
         VerifyButton.IsEnabled = core != null && selected != null && !busy;
         UpdateRelayActions();
+        UpdateFileActions();
+        UpdateConversationActions();
+        UpdateDeletionActions();
     }
     private async Task Refresh(bool messages)
     {
@@ -233,7 +256,7 @@ public partial class MainWindow : Window
                 string name = contact["profile"]?["displayName"]?.ToString() ?? contact["localDisplayName"]!.ToString();
                 bool verified = contact["activeConn"]?["connectionCode"] != null;
                 bool ready = contact["activeConn"]?["connStatus"]?["type"]?.ToString() == "ready";
-                rows.Add(new ContactRow(id, name, ready ? (verified ? "已核验安全码" : "安全码待核验") : "正在完成连接", verified, ready));
+                rows.Add(new ContactRow(id, name, ready ? (verified ? "已核验安全码" : "安全码待核验") : "正在完成连接", verified, ready, Math.Max(0, chat["chatStats"]?["unreadCount"]?.GetValue<int>() ?? 0)));
             }
             long? keep = selected?.Id;
             bool changed = ContactsList.ItemsSource is not List<ContactRow> previous || !previous.SequenceEqual(rows);
@@ -242,11 +265,14 @@ public partial class MainWindow : Window
                 updatingContacts = true;
                 try { ContactsList.ItemsSource = rows; ContactsList.SelectedItem = rows.FirstOrDefault(r => r.Id == keep); }
                 finally { updatingContacts = false; }
-                Contact_Selected(this, new SelectionChangedEventArgs(Selector.SelectionChangedEvent, Array.Empty<object>(), Array.Empty<object>()));
+                if ((ContactsList.SelectedItem as ContactRow)?.Id != keep)
+                    Contact_Selected(this, new SelectionChangedEventArgs(Selector.SelectionChangedEvent, Array.Empty<object>(), Array.Empty<object>()));
+                else { selected = ContactsList.SelectedItem as ContactRow; if (selected != null) ShowContactHeading(); UpdateActions(); }
             }
             NoContacts.Visibility = rows.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
             NoContacts.Text = pendingCount > 0 ? $"有 {pendingCount} 个邀请正在等待连接。" : "还没有联系人。\n通过一次性邀请建立连接。";
             if (messages && selected != null) await RefreshMessages();
+            if (RepairPanel.Visibility == Visibility.Visible) await RefreshRepair();
         }
         catch { if (turn == epoch) FooterStatus.Text = "暂时无法刷新会话，请稍后重试。"; }
         finally { refreshing = false; }
@@ -258,12 +284,14 @@ public partial class MainWindow : Window
         selected = ContactsList.SelectedItem as ContactRow;
         if (previousId != selected?.Id)
         {
+            ResetConversationTools();
+            ++fileContextVersion; fileButtons.Clear();
             conversation.Invalidate(); history.Reset(); historyLoading = false; scrollToLatest = true;
             HistoryStatus.Text = "正在读取消息…";
             MessagesPanel.Children.Clear(); MessageInput.Clear(); CloseModal();
         }
         if (selected == null) { MessagesPanel.Children.Clear(); ChatTitle.Text = "你的私人会话"; ChatDetail.Text = "选择联系人，开始聊天。"; EmptyConversation.Visibility = Visibility.Visible; VerifyButton.Visibility = Visibility.Collapsed; UpdateActions(); return; }
-        ChatTitle.Text = selected.Name; ChatDetail.Text = selected.Detail + (selected.Verified ? " · Ctrl+Enter 发送" : " · 核验后才可发送");
+        ShowContactHeading();
         VerifyButton.Visibility = Visibility.Visible; EmptyConversation.Visibility = Visibility.Collapsed;
         UpdateActions(); await RefreshMessages();
     }
@@ -285,7 +313,9 @@ public partial class MainWindow : Window
         try
         {
             var result = await current.Result($"/_get chat @{contact.Id} " + history.Query(direction));
+            var delivery = await current.MessageStatus(contact.Id);
             if (turn != epoch || selected?.Id != contact.Id || !conversation.IsCurrent(request)) return;
+            ApplyDeliveryStatus(delivery);
             var page = history.Apply(result["chat"]?["chatItems"]?.AsArray() ?? new JsonArray(), direction);
             HistoryStatus.Text = history.Count == 0 ? "还没有消息" : $"{(history.IsLatest ? "最新消息" : "历史消息")} · 本页 {history.Count} 条";
             if (page.Length == 0 && direction != HistoryDirection.Latest) return;
@@ -294,9 +324,12 @@ public partial class MainWindow : Window
             scrollToLatest = false;
             var anchor = MessageViewport.Capture(MessagesPanel, MessageScroll);
             MessagesPanel.Children.Clear();
+            fileButtons.Clear();
+            unreadItems.Clear(); retryButtons.Clear();
             foreach (var item in page)
             {
                 var meta = item!["meta"]!;
+                if (meta["itemStatus"]?["type"]?.ToString() == "rcvNew") unreadItems.Add(meta["itemId"]!.GetValue<long>());
                 string text = meta["itemText"]?.ToString() ?? "";
                 bool sent = item["chatDir"]?["type"]?.ToString() == "directSnd";
                 string type = item["content"]?["type"]?.ToString() ?? "";
@@ -306,7 +339,9 @@ public partial class MainWindow : Window
                 }
                 string label = sent ? ConversationState.DeliveryLabel(meta["itemStatus"]) : "收到";
                 if (DateTime.TryParse(meta["itemTs"]?.ToString(), out var date)) label = date.ToLocalTime().ToString("HH:mm") + " · " + label;
-                MessagesPanel.Children.Add(CreateMessageBubble(text, label, sent, meta["itemId"]?.GetValue<long>()));
+                var bubble = item["file"] != null ? CreateFileBubble(item, label, sent, meta["itemId"]!.GetValue<long>()) : CreateMessageBubble(text, label, sent, meta["itemId"]?.GetValue<long>());
+                AddRetryAction(bubble, item, contact.Id);
+                MessagesPanel.Children.Add(bubble);
             }
             MessageScroll.UpdateLayout();
             if (followLatest) MessageScroll.ScrollToEnd();
@@ -341,10 +376,10 @@ public partial class MainWindow : Window
             var code = await current.Result($"/_get code @{contact.Id}");
             if (turn != epoch || !CanNetwork) return;
             if (!PrivacyPolicy.VerifiedContact(code["contact"])) { FooterStatus.Text = "安全码未核验或已变化，请先重新核验。"; await Refresh(true); return; }
-            await current.Result(PrivacyPolicy.Send(contact.Id, text));
-            if (turn == epoch) { if (selected?.Id == contact.Id && MessageInput.Text == text) MessageInput.Clear(); await RefreshMessages(); FooterStatus.Text = history.IsLatest ? "消息已交给加密核心；送达状态以会话中显示为准。" : "消息已交给加密核心；点击“回到最新”查看发送状态。"; }
+            var result = await current.SendText(contact.Id, Guid.NewGuid().ToString("N"), text);
+            if (turn == epoch) { if (result["state"]?.ToString() == "submitted" && selected?.Id == contact.Id && MessageInput.Text == text) MessageInput.Clear(); await RefreshDelivery(contact.Id); await RefreshMessages(); FooterStatus.Text = DeliveryNotice(result); }
         }
-        catch { if (turn == epoch) FooterStatus.Text = "发送尚未确认，请先检查会话记录，避免重复发送。"; }
+        catch { if (turn == epoch) { await RefreshDelivery(contact.Id); FooterStatus.Text = "发送尚未确认，请先检查会话记录，避免重复发送。"; } }
         finally { if (turn == epoch) { busy = false; UpdateActions(); } }
     }
     private void Message_KeyDown(object sender, KeyEventArgs e) { if (e.Key == Key.Enter && Keyboard.Modifiers.HasFlag(ModifierKeys.Control)) { e.Handled = true; Send_Click(sender, e); } }
@@ -432,16 +467,26 @@ public partial class MainWindow : Window
     private void CloseModal() { ++modalVersion; verificationContact = null; Modal.Visibility = Visibility.Collapsed; ModalInput.Clear(); ModalAux.Visibility = Visibility.Visible; }
     private void ModalClose_Click(object sender, RoutedEventArgs e) => CloseModal();
     private void Help_Click(object sender, RoutedEventArgs e) => MessageBox.Show(this,
-        "1. 创建本地资料库，设置至少 12 个字符的口令。遗忘口令无法找回。\n\n" +
+        "1. 创建本地资料库，设置至少 16 个字符的长口令，建议多个随机词。已有资料仍使用原口令。遗忘口令无法找回。\n\n" +
         "2. 解锁后等待 Tor 通道建立。添加联系人：一方生成邀请，另一方粘贴并接受。\n\n" +
         "3. 通过另一个可信渠道比对双方安全码，核验后才能发送文字。Ctrl+Enter 发送，Enter 换行。\n\n" +
         "4. 邀请持续超时，可选“公共域名（经 Tor）”后重新连接；该选项仍经过 Tor。\n\n" +
         "5. 锁定、Windows 锁屏、睡眠/唤醒或闲置 5 分钟会断开连接，重新解锁后接收待收消息。\n\n" +
         "6. 消息按每页最多 100 条显示。使用“更早消息”和“较新消息”翻页；“回到最新”返回当前对话末尾。浏览历史时，收到消息不会切换当前页。\n\n" +
-        "Private Chat 0.8.1 · 本地测试版\n尚未完成跨设备验证与独立安全审计。当前支持一对一文字聊天。",
+        "7. 点击“发送 TXT”，仅支持 .txt 纯文本，最多 25 MB。每次发送自动改名为“文档-随机编号.txt”，原文件名不发送，本机文件不重命名。文本统一为 UTF-8，正文中的个人信息仍保留。不支持 Word、PDF 或图片。接收方手动接收，另存为后的普通文件不受资料库口令保护。\n\n" +
+        "8. 本版不提供备份创建、恢复或删除入口。以前另存的文件不会因更新而自动消失。系统快照或同步软件仍可能复制应用目录；请保管好当前资料与口令。\n\n" +
+        "9. 联系人旁显示本地未读数量；仅当前窗口实际显示的消息标为已读，不开启对外已读回执。失败的文字消息可点击“重试发送”。结果未知时先核对记录，不会自动重发。\n\n" +
+        "10. 会话顶部“连接修复”可检查状态、重连 Tor；只有核心确认允许时才能修复加密连接。修复后请重新核验安全码。TXT 附件失败仍需重新选择文件发送。\n\n" +
+        "11. 新建资料使用 scrypt 与 AES-256-GCM 保护随机密钥，并绑定当前 Windows 用户。重装系统、删除用户或丢失系统密钥后可能永久无法恢复；此保护不抵抗已入侵的当前用户。旧资料可在“数据销毁”中输入原口令，点击“升级本地加密保护”，保留身份和聊天；成功后清除本次迁移旧副本。销毁时逐份尝试清除当前和内部副本的密钥，再完整覆写、刷新、核验并删除资料。成功后应用自动关闭。SSD 旧页、系统快照、休眠等系统副本不在保证范围内。另存备份和导出 TXT 保留；有备份和口令仍可能恢复旧身份。\n\n" +
+        "Private Chat 0.10.11 · 开发测试版\n支持一对一文字、TXT 附件和本机身份销毁；已取消备份与恢复，尚未经过独立安全审计。",
         "使用帮助", MessageBoxButton.OK, MessageBoxImage.Information);
     [DllImport("user32.dll", SetLastError = true)] private static extern bool SetWindowDisplayAffinity(IntPtr window, uint affinity);
     [DllImport("dwmapi.dll")] private static extern int DwmSetWindowAttribute(IntPtr window, int attribute, ref int value, int size);
 }
 
-public sealed record ContactRow(long Id, string Name, string Detail, bool Verified, bool Ready);
+public sealed record ContactRow(long Id, string Name, string Detail, bool Verified, bool Ready, int Unread = 0)
+{
+    public string UnreadLabel => Unread > 99 ? "99+" : Unread.ToString();
+    public Visibility UnreadVisibility => Unread > 0 ? Visibility.Visible : Visibility.Collapsed;
+    public string UnreadHelp => $"{Unread} 条未读消息";
+}

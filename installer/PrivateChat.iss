@@ -2,10 +2,10 @@
   #error PayloadDir must point to the verified distribution staging directory.
 #endif
 #ifndef ReleaseVersion
-  #define ReleaseVersion "0.8.1"
+  #define ReleaseVersion "0.10.4"
 #endif
 #ifndef OutputPath
-  #define OutputPath "..\artifacts\release-0.8.1"
+  #define OutputPath "..\artifacts\release-0.10.4"
 #endif
 
 [Setup]

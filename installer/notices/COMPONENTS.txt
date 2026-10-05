@@ -1,23 +1,29 @@
-Private Chat 0.8.1
+Private Chat — bundled component notices
 
 Application source: GNU Affero General Public License v3, see LICENSE.
 https://github.com/dayejetty-code/private-chat-desktop
 
-SimpleX native core 7.0.3: AGPL-3.0, see SIMPLEX-LICENSE.txt.
+SimpleX native core 7.0.3 with local parser backport: AGPL-3.0, see SIMPLEX-LICENSE.txt.
 Source and upstream build instructions:
 https://github.com/simplex-chat/simplex-chat/tree/v7.0.3
+Stable commit: b3907c9de7a2c596075762bf05ba3e1d2532aff1
+Forward-depth patch: https://github.com/simplex-chat/simplex-chat/pull/7614/files
+Local source patch and build provenance: tests/security-fixes-0.10.12/native-backport/
+This locally built DLL is not an unmodified upstream release binary.
 
-.NET runtime 8.0.31: see DOTNET-LICENSE.txt and DOTNET-THIRD-PARTY-NOTICES.txt.
-https://github.com/dotnet/runtime/tree/v8.0.31
+.NET runtime 10.0.12: see DOTNET-LICENSE.txt and DOTNET-THIRD-PARTY-NOTICES.txt.
+https://github.com/dotnet/runtime/tree/v10.0.12
 
 Tor expert bundle 15.0.24 / Tor 0.4.9.13:
 The complete upstream notices for Tor, OpenSSL, libevent, zlib, Lyrebird
 and Conjure are included under runtime/tor/docs/.
 https://archive.torproject.org/tor-package-archive/torbrowser/15.0.24/
 
-The native OpenSSL 3 library retains its Apache-2.0 terms; see
-runtime/tor/docs/openssl.txt for the OpenSSL license notice.
-https://github.com/openssl/openssl
+The SimpleX-side libcrypto is OpenSSL 3.5.9 from the FireDaemon Windows x64
+distribution, under Apache-2.0; see OPENSSL-LICENSE.txt.
+https://kb.firedaemon.com/support/solutions/articles/4000121705
+https://github.com/openssl/openssl/tree/openssl-3.5.9
+The Tor bundle carries its own component notices under runtime/tor/docs/.
 
 Installer generated with Inno Setup 7.1.0:
 https://jrsoftware.org/isinfo.php

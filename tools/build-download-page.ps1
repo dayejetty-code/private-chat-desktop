@@ -1,4 +1,4 @@
-param([string]$Version='0.8.1',[string]$Repository='dayejetty-code/private-chat-desktop')
+param([string]$Version='0.10.2',[string]$Repository='dayejetty-code/private-chat-desktop')
 $ErrorActionPreference='Stop'
 if($Version -notmatch '^\d+\.\d+\.\d+$' -or $Repository -notmatch '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$'){throw 'Invalid release configuration'}
 $root=Split-Path -Parent $PSScriptRoot

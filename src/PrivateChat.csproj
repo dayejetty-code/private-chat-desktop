@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -9,21 +9,35 @@
     <AssemblyName>PrivateChat</AssemblyName>
     <RootNamespace>PrivateChat</RootNamespace>
     <StartupObject>PrivateChat.Program</StartupObject>
-    <Version>0.8.1</Version>
+    <Version>0.10.12</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(EnableQa)' == 'true'">
     <DefineConstants>$(DefineConstants);ENABLE_QA</DefineConstants>
   </PropertyGroup>
+  <ItemGroup><Compile Remove="TorRoutes.cs;MainWindow.TorRoutes.cs;MainWindow.Backup.cs" /></ItemGroup>
   <ItemGroup Condition="'$(EnableQa)' != 'true'">
-    <Compile Remove="SelfTest.cs" />
+    <Compile Remove="SelfTest.cs;BackupArchive.cs" />
   </ItemGroup>
   <ItemGroup Condition="'$(EnableQa)' == 'true'">
     <Compile Include="../tests/SecurityTests.cs" Link="SecurityTests.cs" />
     <Compile Include="../tests/HistoryTests.cs" Link="HistoryTests.cs" />
     <Compile Include="../tests/RelayTests.cs" Link="RelayTests.cs" />
     <Compile Include="../tests/AuditRegressionTests.cs" Link="AuditRegressionTests.cs" />
+    <Compile Include="../tests/FileTransferTests.cs" Link="FileTransferTests.cs" />
+    <Compile Include="../tests/FileUiTests.cs" Link="FileUiTests.cs" />
+    <Compile Include="../tests/TextDocumentTests.cs" Link="TextDocumentTests.cs" />
+    <Compile Include="../tests/CacheTests.cs" Link="CacheTests.cs" />
+    <Compile Include="../tests/BackupTests.cs" Link="BackupTests.cs" />
+    <Compile Include="../tests/BackupNetworkTests.cs" Link="BackupNetworkTests.cs" />
+    <Compile Include="../tests/ConversationTests.cs" Link="ConversationTests.cs" />
+    <Compile Include="../tests/DeletionTests.cs" Link="DeletionTests.cs" />
+    <Compile Include="../tests/KeyTests.cs" Link="KeyTests.cs" />
+    <Compile Include="../tests/ErasureTests.cs" Link="ErasureTests.cs" />
+    <Compile Include="../tests/PrivacyTests.cs" Link="PrivacyTests.cs" />
+    <Compile Include="../tests/PrivacyNetworkTests.cs" Link="PrivacyNetworkTests.cs" />
+
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(RuntimeManifestPath)" LogicalName="PrivateChat.RuntimeManifest" />

@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0-windows</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><AllowUnsafeBlocks>true</AllowUnsafeBlocks><DefineConstants>ENABLE_QA</DefineConstants><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="../../RelayTests.cs" />
+    <Compile Include="../../../src/CoreClient.cs;../../../src/NetworkSandbox.cs;../../../src/RuntimeSecurity.cs;../../../src/TorService.cs;../../../src/FileTransfer.cs;../../../src/TextDocument.cs;../../../src/FileCache.cs;../../../src/RelaySettings.cs;../../../src/ProfileKeys.cs;../../../src/PasswordKdf.cs;../../../src/UserKeyProtection.cs;../../../src/DeletionFile.cs;../../../src/ProfileDeletion.cs;../../../src/ProfileBackup.cs;../../../src/ProfileRestore.cs;../../../src/ProfileKeyMigration.cs;../../../src/BackupArchive.cs" />
+    <EmbeddedResource Include="$(RuntimeManifestPath)" LogicalName="PrivateChat.RuntimeManifest" />
+  </ItemGroup>
+</Project>

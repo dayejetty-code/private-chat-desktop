@@ -1,4 +1,5 @@
 tools/dotnet/
+tools/dotnet10/
 tools/*.zip
 tools/*.part
 tools/*.exe
@@ -26,9 +27,38 @@ tests/installer-qa/
 **/*.db
 **/*.db-wal
 **/*.db-shm
+**/profile.key
 **/instance.lock
 src/Assets/
 src/bin/
 src/obj/
 tests/probe-*/
 tests/capture*/
+tests/bridge-repair/space path/
+tests/bridge-repair/qa/
+tests/bridge-repair/results/
+tests/network-isolation/qa/
+tests/network-isolation/debug/
+tests/network-isolation/probe/
+tests/network-isolation/results/
+tests/network-isolation/Bridge Space/
+tests/network-isolation/Final Bridge Space/
+tests/network-isolation/legacy-upgrade-*/
+tests/network-stability-0.10.4/production/
+tests/network-stability-0.10.4/runs/
+tests/network-stability-0.10.4/ui/
+tests/network-stability-0.10.4/latest-run.txt
+tests/network-stability-0.10.11/production/
+tests/network-stability-0.10.11/runs/
+tests/network-stability-0.10.11/latest-run.txt
+tests/network-stability-0.10.11/Expected.cs
+tests/network-stability-0.10.11/isolation/*.json
+tests/security-review-0.10.11/20*/
+tests/security-review-0.10.11/latest-run.txt
+tests/security-fixes-0.10.12/runs/
+tests/security-fixes-0.10.12/latest-run.txt
+tests/security-fixes-0.10.12/parser-latest-run.txt
+tests/security-fixes-0.10.12/backport-latest-run.txt
+tests/security-fixes-0.10.12/Protocol-*.hs
+*.pcbackup
+*.pcbackup.*.partial
